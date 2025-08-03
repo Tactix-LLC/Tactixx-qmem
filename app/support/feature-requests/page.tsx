@@ -288,29 +288,7 @@ export default function FeatureRequests() {
               </motion.div>
             </div>
 
-            {/* Community Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-center mt-16"
-            >
-              <Card className="border-green-200 dark:border-green-800 max-w-2xl mx-auto">
-                <CardContent className="p-8">
-                  <MessageCircle className="w-12 h-12 mx-auto mb-4 text-green-600" />
-                  <h3 className="text-2xl font-bold mb-4">
-                    Join the Discussion
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    Connect with other users, vote on features, and discuss
-                    ideas in our community forum.
-                  </p>
-                  <Button className="bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700">
-                    Visit Community Forum
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+           
           </div>
         </section>
       </div>

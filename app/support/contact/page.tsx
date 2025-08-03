@@ -26,15 +26,23 @@ import {
   Target,
   Users,
   Zap,
+  CheckCircle,
+  AlertCircle,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { FootballBackground } from "@/components/football-background";
 import { IPhoneFrame } from "@/components/iphone-frame";
-import { sendEmail } from "@/lib/email-service";
+import { sendEmail, testSMTPConnection } from "@/lib/email-service";
 
 export default function ContactUs() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [smtpStatus, setSmtpStatus] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
@@ -51,14 +59,34 @@ export default function ContactUs() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Validate form data
+    if (
+      !formData.firstName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.subject ||
+      !formData.message.trim()
+    ) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please fill in all required fields.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    console.log("Form data being sent:", formData); // Debug log
+
     try {
       const result = await sendEmail({
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim(),
         subject: formData.subject,
-        message: formData.message,
+        message: formData.message.trim(),
         type: "contact",
       });
+
+      console.log("Email service result:", result); // Debug log
 
       if (result.success) {
         setSubmitStatus({ type: "success", message: result.message });
@@ -69,11 +97,17 @@ export default function ContactUs() {
           subject: "",
           message: "",
         });
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: result.message || "Failed to send message",
+        });
       }
     } catch (error) {
+      console.error("Form submission error:", error); // Debug log
       setSubmitStatus({
         type: "error",
-        message: "Failed to send message. Please try again.",
+        message: "An unexpected error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -82,6 +116,26 @@ export default function ContactUs() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const testConnection = async () => {
+    setIsTesting(true);
+    setSmtpStatus(null);
+
+    try {
+      const result = await testSMTPConnection();
+      setSmtpStatus({
+        type: result.success ? "success" : "error",
+        message: result.message,
+      });
+    } catch (error) {
+      setSmtpStatus({
+        type: "error",
+        message: "Failed to test connection",
+      });
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   return (
@@ -182,14 +236,54 @@ export default function ContactUs() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Link>
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-lime-500 rounded-lg flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-white" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
+                  Tactics PLC
+                </span>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
-                Tactics PLC
-              </span>
+
+              {/* SMTP Test Button (Development Only) */}
+              {process.env.NODE_ENV === "development" && (
+                <Button
+                  onClick={testConnection}
+                  disabled={isTesting}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                >
+                  {isTesting ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Testing...
+                    </div>
+                  ) : (
+                    <>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Test SMTP
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
+
+            {/* SMTP Status */}
+            {smtpStatus && (
+              <div
+                className={`mt-4 p-3 rounded-lg flex items-center ${
+                  smtpStatus.type === "success"
+                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                }`}
+              >
+                {smtpStatus.type === "success" ? (
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 mr-2" />
+                )}
+                {smtpStatus.message}
+              </div>
+            )}
           </div>
         </div>
 
@@ -354,37 +448,6 @@ export default function ContactUs() {
                       </CardContent>
                     </Card>
                   </motion.div>
-
-                  {/* Attack - Live Chat */}
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className="ml-16"
-                  >
-                    <Card className="border-green-200 dark:border-green-800 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950 dark:to-green-950">
-                      <CardHeader>
-                        <CardTitle className="flex items-center">
-                          <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mr-4">
-                            <MessageCircle className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <div className="text-lg">Instant Strike Force</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">
-                              Attack Formation
-                            </div>
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">
-                          Real-time tactical assistance
-                        </p>
-                        <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700">
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Launch Live Chat
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
                 </div>
               </motion.div>
 
@@ -456,19 +519,25 @@ export default function ContactUs() {
                           <SelectValue placeholder="Select Topic" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="account">
+                          <SelectItem value="Account Issues">
                             Account Issues
                           </SelectItem>
-                          <SelectItem value="technical">
+                          <SelectItem value="Technical Support">
                             Technical Support
                           </SelectItem>
-                          <SelectItem value="billing">
+                          <SelectItem value="Billing Questions">
                             Billing Questions
                           </SelectItem>
-                          <SelectItem value="feature">
+                          <SelectItem value="Feature Request">
                             Feature Request
                           </SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="General Inquiry">
+                            General Inquiry
+                          </SelectItem>
+                          <SelectItem value="Partnership">
+                            Partnership
+                          </SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -503,13 +572,20 @@ export default function ContactUs() {
 
                       {submitStatus && (
                         <div
-                          className={`text-center text-sm p-2 rounded ${
+                          className={`text-center text-sm p-3 rounded-lg flex items-center ${
                             submitStatus.type === "success"
                               ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                               : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                           }`}
                         >
-                          {submitStatus.message}
+                          {submitStatus.type === "success" ? (
+                            <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                          ) : (
+                            <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                          )}
+                          <span className="text-left">
+                            {submitStatus.message}
+                          </span>
                         </div>
                       )}
                     </form>
@@ -526,49 +602,6 @@ export default function ContactUs() {
                 </IPhoneFrame>
               </motion.div>
             </div>
-
-            {/* Tactical Call to Action */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="text-center mt-16"
-            >
-              <Card className="border-green-200 dark:border-green-800 max-w-4xl mx-auto bg-gradient-to-r from-green-50 via-lime-50 to-emerald-50 dark:from-green-950 dark:via-lime-950 dark:to-emerald-950">
-                <CardContent className="p-12">
-                  <div className="flex justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center">
-                      <Target className="w-10 h-10 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
-                    Ready to Dominate?
-                  </h3>
-                  <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-                    Our tactical support team is standing by to help you execute
-                    the perfect fantasy football strategy. Every champion needs
-                    a winning game plan.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700"
-                    >
-                      <MessageCircle className="w-5 h-5 mr-2" />
-                      Start Live Chat
-                    </Button>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 bg-transparent"
-                    >
-                      <Phone className="w-5 h-5 mr-2" />
-                      Call Now
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
           </div>
         </section>
       </div>

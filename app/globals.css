@@ -1,5 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
 
@@ -177,8 +178,6 @@ html {
   scroll-behavior: smooth;
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -186,4 +185,8 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+::selection {
+  @apply bg-primary text-primary-foreground;
 }
