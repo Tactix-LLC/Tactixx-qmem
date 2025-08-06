@@ -3,8 +3,17 @@
 import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Menu,
   X,
@@ -19,18 +28,119 @@ import {
   Sun,
   ChevronDown,
   CheckCircle,
-  ArrowRight,
+  Mail,
+  Phone,
+  Send,
+  Settings,
+  AlertCircle,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { FootballBackground } from "@/components/football-background";
 import { PartnersSection } from "@/components/partners-section";
+import { IPhoneFrame } from "@/components/iphone-frame";
+import { sendEmail, testSMTPConnection } from "@/lib/email-service";
 
 export default function FantasyFootballWebsite() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [smtpStatus, setSmtpStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    if (
+      !formData.firstName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.subject ||
+      !formData.message.trim()
+    ) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please fill in all required fields.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const result = await sendEmail({
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim(),
+        subject: formData.subject,
+        message: formData.message.trim(),
+        type: "contact",
+      });
+
+      if (result.success) {
+        setSubmitStatus({ type: "success", message: result.message });
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: result.message || "Failed to send message",
+        });
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: "error",
+        message: "An unexpected error occurred. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const testConnection = async () => {
+    setIsTesting(true);
+    setSmtpStatus(null);
+
+    try {
+      const result = await testSMTPConnection();
+      setSmtpStatus({
+        type: result.success ? "success" : "error",
+        message: result.message,
+      });
+    } catch (error) {
+      setSmtpStatus({
+        type: "error",
+        message: "Failed to test connection",
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-lime-50 to-emerald-50 dark:from-green-950 dark:via-lime-950 dark:to-emerald-950">
@@ -56,8 +166,9 @@ export default function FantasyFootballWebsite() {
             <nav className="hidden md:flex items-center space-x-8">
               {[
                 { name: "Home", href: "#home" },
-                { name: "Features", href: "/features" },
-                { name: "Download", href: "/download" },
+                { name: "Features", href: "#features" },
+                { name: "Download", href: "#download" },
+                { name: "Contact", href: "#contact" }, // Added Contact link
               ].map((item) => (
                 <motion.a
                   key={item.name}
@@ -119,8 +230,9 @@ export default function FantasyFootballWebsite() {
             >
               {[
                 { name: "Home", href: "#home" },
-                { name: "Features", href: "/features" },
-                { name: "Download", href: "/download" },
+                { name: "Features", href: "#features" },
+                { name: "Download", href: "#download" },
+                { name: "Contact", href: "#contact" }, // Added Contact link
               ].map((item) => (
                 <a
                   key={item.name}
@@ -141,7 +253,6 @@ export default function FantasyFootballWebsite() {
         id="home"
         className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
       >
-        {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero.jpg"
@@ -160,7 +271,6 @@ export default function FantasyFootballWebsite() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative order-first lg:order-first"
             >
-              {/* Phone Mockup with Real Screenshot */}
               <motion.div
                 animate={{
                   y: [-10, 10, -10],
@@ -176,7 +286,6 @@ export default function FantasyFootballWebsite() {
                   className="relative mx-auto"
                   style={{ width: "300px", height: "600px" }}
                 >
-                  {/* Phone Frame */}
                   <div className="absolute inset-0 bg-gray-900 rounded-[3rem] shadow-2xl">
                     <div className="absolute inset-2 bg-black rounded-[2.5rem] p-2">
                       <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10"></div>
@@ -235,20 +344,150 @@ export default function FantasyFootballWebsite() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
-                className="flex items-center justify-center lg:justify-start space-x-8 mt-12"
+                className="flex flex-col items-center lg:items-start space-y-6 mt-12"
               >
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-lime-400">20+</div>
-                  <div className="text-sm text-gray-300">Active Players</div>
+                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6">
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-lime-400">
+                        20+
+                      </div>
+                      <div className="text-sm text-gray-300">
+                        Active Players
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-400">
+                        4.9
+                      </div>
+                      <div className="text-sm text-gray-300">App Rating</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-emerald-400">
+                        50+
+                      </div>
+                      <div className="text-sm text-gray-300">Daily Matches</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                    <motion.a
+                      href="https://www.apple.com/app-store/"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block group"
+                    >
+                      <div className="bg-black hover:bg-gray-800 transition-colors duration-300 rounded-xl px-4 py-2 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                        <svg
+                          className="w-6 h-6 text-white"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                        </svg>
+                        <div className="text-left">
+                          <div className="text-xs text-gray-300 leading-tight">
+                            Download on the
+                          </div>
+                          <div className="text-sm font-semibold text-white leading-tight">
+                            App Store
+                          </div>
+                        </div>
+                      </div>
+                    </motion.a>
+
+                    <motion.a
+                      href="https://play.google.com/store"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block group"
+                    >
+                      <div className="bg-black hover:bg-gray-800 transition-colors duration-300 rounded-xl px-4 py-2 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                        <svg className="w-6 h-6" viewBox="0 0 24 24">
+                          <defs>
+                            <linearGradient
+                              id="playGradient1"
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              <stop offset="0%" stopColor="#00D4FF" />
+                              <stop offset="100%" stopColor="#0099CC" />
+                            </linearGradient>
+                            <linearGradient
+                              id="playGradient2"
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              <stop offset="0%" stopColor="#FFD500" />
+                              <stop offset="100%" stopColor="#FF9500" />
+                            </linearGradient>
+                            <linearGradient
+                              id="playGradient3"
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              <stop offset="0%" stopColor="#FF4444" />
+                              <stop offset="100%" stopColor="#CC0000" />
+                            </linearGradient>
+                            <linearGradient
+                              id="playGradient4"
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              <stop offset="0%" stopColor="#00E676" />
+                              <stop offset="100%" stopColor="#00C853" />
+                            </linearGradient>
+                          </defs>
+                          <path
+                            d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5Z"
+                            fill="url(#playGradient1)"
+                          />
+                          <path
+                            d="M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12Z"
+                            fill="url(#playGradient2)"
+                          />
+                          <path
+                            d="M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81Z"
+                            fill="url(#playGradient3)"
+                          />
+                          <path
+                            d="M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"
+                            fill="url(#playGradient4)"
+                          />
+                        </svg>
+                        <div className="text-left">
+                          <div className="text-xs text-gray-300 leading-tight">
+                            GET IT ON
+                          </div>
+                          <div className="text-sm font-semibold text-white leading-tight">
+                            Google Play
+                          </div>
+                        </div>
+                      </div>
+                    </motion.a>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400">4.9</div>
-                  <div className="text-sm text-gray-300">App Rating</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-emerald-400">50+</div>
-                  <div className="text-sm text-gray-300">Daily Matches</div>
-                </div>
+
+                {/* Add Contact CTA */}
+                <motion.a
+                  href="#contact"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-block mt-4"
+                >
+                  <Button className="bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700 text-white px-6 py-3 text-lg">
+                    Contact Us
+                    <Send className="ml-2 w-5 h-5" />
+                  </Button>
+                </motion.a>
               </motion.div>
             </motion.div>
           </div>
@@ -264,7 +503,10 @@ export default function FantasyFootballWebsite() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+      <section
+        id="features"
+        className="py-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
+      >
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -334,7 +576,7 @@ export default function FantasyFootballWebsite() {
       {/* Partners Section */}
       <PartnersSection />
 
-      {/* How to Play Section with Text Instructions */}
+      {/* How to Play Section */}
       <section
         id="how-to-play"
         className="py-20 bg-transparent backdrop-blur-sm"
@@ -365,7 +607,6 @@ export default function FantasyFootballWebsite() {
               transition={{ duration: 0.8 }}
               className="relative mb-16"
             >
-              {/* MacBook Pro Frame with Text Instructions */}
               <div className="relative bg-gray-800 rounded-t-xl p-2 shadow-2xl">
                 <div className="flex items-center space-x-2 mb-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -373,7 +614,6 @@ export default function FantasyFootballWebsite() {
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 </div>
                 <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden min-h-[500px]">
-                  {/* Browser-like interface with step-by-step instructions */}
                   <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
@@ -384,7 +624,6 @@ export default function FantasyFootballWebsite() {
                   </div>
 
                   <div className="p-8 space-y-8">
-                    {/* Step-by-step instructions */}
                     {[
                       {
                         step: "01",
@@ -494,7 +733,6 @@ export default function FantasyFootballWebsite() {
               <div className="bg-gray-300 dark:bg-gray-700 h-4 rounded-b-xl"></div>
             </motion.div>
 
-            {/* Quick Stats */}
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
@@ -539,6 +777,433 @@ export default function FantasyFootballWebsite() {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section
+        id="contact"
+        className="py-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
+      >
+        <div className="container mx-auto px-4">
+          {/* Tactical Elements Overlay */}
+          <div className="absolute inset-0 z-0 opacity-10 dark:opacity-5">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 1200 800"
+              className="w-full h-full"
+            >
+              <defs>
+                <marker
+                  id="tacticalArrow"
+                  markerWidth="12"
+                  markerHeight="8"
+                  refX="11"
+                  refY="4"
+                  orient="auto"
+                >
+                  <polygon
+                    points="0 0, 12 4, 0 8"
+                    fill="currentColor"
+                    className="text-green-600"
+                  />
+                </marker>
+              </defs>
+              <motion.line
+                x1="100"
+                y1="100"
+                x2="300"
+                y2="200"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="text-green-600"
+                markerEnd="url(#tacticalArrow)"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+              />
+              <motion.line
+                x1="900"
+                y1="150"
+                x2="700"
+                y2="250"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="text-lime-600"
+                markerEnd="url(#tacticalArrow)"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                  delay: 0.5,
+                }}
+              />
+              <motion.line
+                x1="200"
+                y1="600"
+                x2="400"
+                y2="500"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="text-emerald-600"
+                markerEnd="url(#tacticalArrow)"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: 3,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                  delay: 1,
+                }}
+              />
+            </svg>
+          </div>
+
+          <div className="relative z-10">
+            {/* Contact Hero */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <Target className="w-4 h-4 mr-2" />
+                Tactical Support Command
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 via-lime-600 to-emerald-600 bg-clip-text text-transparent">
+                Execute Your Contact Strategy
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Deploy your message with precision. Our tactical support team is
+                ready to assist you in dominating your fantasy football
+                challenges.
+              </p>
+            </motion.div>
+
+            {/* Tactical Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid md:grid-cols-3 gap-6 mb-16"
+            >
+              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-4"></div>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">
+                    &lt; 2 Hours
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Average Response Time
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-lime-600 mb-2">
+                    24/7
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Support Coverage
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-emerald-600 mb-2">
+                    98%
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Resolution Rate
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* SMTP Test Button (Development Only) */}
+            {process.env.NODE_ENV === "development" && (
+              <div className="text-center mb-8">
+                <Button
+                  onClick={testConnection}
+                  disabled={isTesting}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                >
+                  {isTesting ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Testing...
+                    </div>
+                  ) : (
+                    <>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Test SMTP
+                    </>
+                  )}
+                </Button>
+                {smtpStatus && (
+                  <div
+                    className={`mt-4 p-3 rounded-lg flex items-center justify-center ${
+                      smtpStatus.type === "success"
+                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                    }`}
+                  >
+                    {smtpStatus.type === "success" ? (
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5 mr-2" />
+                    )}
+                    {smtpStatus.message}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+              {/* Contact Methods - Tactical Formation */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="space-y-6"
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
+                    Choose Your Formation
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Select your preferred tactical approach to reach our team
+                  </p>
+                </div>
+
+                <div className="relative">
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="mb-6"
+                  >
+                    <Card className="border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950">
+                      <CardHeader>
+                        <CardTitle className="flex items-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mr-4">
+                            <Mail className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <div className="text-lg">Email Command Center</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
+                              Primary Defense
+                            </div>
+                          </div>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 dark:text-gray-300 mb-2">
+                          support@tacticsplc.com
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Strategic response within 24 hours
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="mb-6 ml-8"
+                  >
+                    <Card className="border-green-200 dark:border-green-800 bg-gradient-to-r from-lime-50 to-emerald-50 dark:from-lime-950 dark:to-emerald-950">
+                      <CardHeader>
+                        <CardTitle className="flex items-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-full flex items-center justify-center mr-4">
+                            <Phone className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <div className="text-lg">Direct Tactical Line</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
+                              Midfield Control
+                            </div>
+                          </div>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 dark:text-gray-300 mb-2">
+                          +1 (555) 123-4567
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Live tactical support Mon-Fri, 9AM-6PM EST
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* iPhone Contact Form */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex justify-center"
+              >
+                <IPhoneFrame>
+                  <div className="h-full bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950 p-4 overflow-y-auto">
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Trophy className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        Tactics PLC
+                      </h3>
+                      <p className="text-sm text-gray-600">Contact Command</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Input
+                            placeholder="First Name"
+                            value={formData.firstName}
+                            onChange={(e) =>
+                              handleInputChange("firstName", e.target.value)
+                            }
+                            className="text-sm border-green-200 dark:border-green-800"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            placeholder="Last Name"
+                            value={formData.lastName}
+                            onChange={(e) =>
+                              handleInputChange("lastName", e.target.value)
+                            }
+                            className="text-sm border-green-200 dark:border-green-800"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <Input
+                        type="email"
+                        placeholder="Email Address"
+                        value={formData.email}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
+                        className="text-sm border-green-200 dark:border-green-800"
+                        required
+                      />
+
+                      <Select
+                        onValueChange={(value) =>
+                          handleInputChange("subject", value)
+                        }
+                        required
+                      >
+                        <SelectTrigger className="text-sm border-green-200 dark:border-green-800">
+                          <SelectValue placeholder="Select Topic" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Account Issues">
+                            Account Issues
+                          </SelectItem>
+                          <SelectItem value="Technical Support">
+                            Technical Support
+                          </SelectItem>
+                          <SelectItem value="Billing Questions">
+                            Billing Questions
+                          </SelectItem>
+                          <SelectItem value="Feature Request">
+                            Feature Request
+                          </SelectItem>
+                          <SelectItem value="General Inquiry">
+                            General Inquiry
+                          </SelectItem>
+                          <SelectItem value="Partnership">
+                            Partnership
+                          </SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Textarea
+                        placeholder="Describe your tactical challenge..."
+                        value={formData.message}
+                        onChange={(e) =>
+                          handleInputChange("message", e.target.value)
+                        }
+                        rows={4}
+                        className="text-sm border-green-200 dark:border-green-800 resize-none"
+                        required
+                      />
+
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700 text-sm"
+                      >
+                        {isSubmitting ? (
+                          <div className="flex items-center">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                            Deploying...
+                          </div>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Execute Mission
+                          </>
+                        )}
+                      </Button>
+
+                      {submitStatus && (
+                        <div
+                          className={`text-center text-sm p-3 rounded-lg flex items-center ${
+                            submitStatus.type === "success"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          }`}
+                        >
+                          {submitStatus.type === "success" ? (
+                            <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                          ) : (
+                            <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                          )}
+                          <span className="text-left">
+                            {submitStatus.message}
+                          </span>
+                        </div>
+                      )}
+                    </form>
+
+                    <div className="mt-6 text-center">
+                      <div className="flex justify-center space-x-4 text-xs text-gray-500">
+                        <span>🏆 Secure</span>
+                        <span>⚡ Fast</span>
+                        <span>🎯 Precise</span>
+                      </div>
+                    </div>
+                  </div>
+                </IPhoneFrame>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Download Section */}
       <section
         id="download"
@@ -558,8 +1223,8 @@ export default function FantasyFootballWebsite() {
                 Get Tactics App Today!
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300 mb-12">
-                Available on all platforms. Start your fantasy football journey
-                now!
+                Available on iOS and Android. Start your fantasy football
+                journey now!
               </p>
             </motion.div>
 
@@ -569,15 +1234,13 @@ export default function FantasyFootballWebsite() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             >
-              {/* Custom App Store Button */}
               <motion.a
-                href="#"
+                href="https://www.apple.com/app-store/"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-block group"
               >
                 <div className="bg-black hover:bg-gray-800 transition-colors duration-300 rounded-xl px-6 py-3 flex items-center space-x-3 shadow-lg hover:shadow-xl">
-                  {/* Apple Logo SVG */}
                   <svg
                     className="w-8 h-8 text-white"
                     viewBox="0 0 24 24"
@@ -596,15 +1259,13 @@ export default function FantasyFootballWebsite() {
                 </div>
               </motion.a>
 
-              {/* Custom Google Play Button */}
               <motion.a
-                href="#"
+                href="https://play.google.com/store"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-block group"
               >
                 <div className="bg-black hover:bg-gray-800 transition-colors duration-300 rounded-xl px-6 py-3 flex items-center space-x-3 shadow-lg hover:shadow-xl">
-                  {/* Google Play Logo SVG */}
                   <svg className="w-8 h-8" viewBox="0 0 24 24">
                     <defs>
                       <linearGradient
@@ -705,12 +1366,11 @@ export default function FantasyFootballWebsite() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="bg-gray-900/95 backdrop-blur-sm text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-8">
+            <div className="min-w-[200px]">
               <div className="flex items-center space-x-2 mb-4">
                 <span className="text-xl font-bold">Tactics PLC</span>
               </div>
@@ -719,37 +1379,7 @@ export default function FantasyFootballWebsite() {
               </p>
             </div>
 
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a
-                    href="/support/contact"
-                    className="hover:text-green-400 transition-colors"
-                  >
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/support/bug-reports"
-                    className="hover:text-green-400 transition-colors"
-                  >
-                    Bug Reports
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/support/feature-requests"
-                    className="hover:text-green-400 transition-colors"
-                  >
-                    Feature Requests
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
+            <div className="min-w-[150px]">
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
@@ -789,7 +1419,7 @@ export default function FantasyFootballWebsite() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy;Tactics PLC. All rights reserved.</p>
+            <p>&copy; Tactics PLC. All rights reserved.</p>
           </div>
         </div>
       </footer>
