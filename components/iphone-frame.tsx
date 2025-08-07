@@ -15,7 +15,7 @@ export function IPhoneFrame({ children, className = "" }: IPhoneFrameProps) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8 }}
       className={`relative mx-auto ${className}`}
-      style={{ width: "320px", height: "640px" }}
+      style={{ width: "220px", height: "440px" }}
     >
       {/* iPhone Frame */}
       <div className="relative w-full h-full">

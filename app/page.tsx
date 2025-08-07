@@ -142,6 +142,31 @@ export default function FantasyFootballWebsite() {
     }
   };
 
+  // Mock league leader data
+  const leagueLeaders = [
+    {
+      rank: 1,
+      name: "Alex Thunder",
+      successor: "J. Martinez",
+      points: 1450,
+      winningStreak: true,
+    },
+    {
+      rank: 2,
+      name: "Sam Strike",
+      successor: "R. Gomez",
+      points: 1320,
+      winningStreak: false,
+    },
+    {
+      rank: 3,
+      name: "Liam Vortex",
+      successor: "K. Patel",
+      points: 1285,
+      winningStreak: true,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-lime-50 to-emerald-50 dark:from-green-950 dark:via-lime-950 dark:to-emerald-950">
       <FootballBackground />
@@ -149,17 +174,71 @@ export default function FantasyFootballWebsite() {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-green-200 dark:border-green-800"
+        className="fixed top-0 w-full z-50 bg-green-500 dark:bg-gray-900/80 backdrop-blur-lg border-b border-green-200 dark:border-green-800"
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <motion.div
               className="flex items-center space-x-2"
               whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
-                Tactics™
-              </span>
+              <div className="relative flex items-center justify-center">
+                <svg
+                  width="80"
+                  height="80"
+                  viewBox="0 0 100 100"
+                  className="text-green-600 dark:text-lime-400"
+                  style={{
+                    filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2))",
+                  }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="tactixGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" style={{ stopColor: "#10B981" }} />
+                      <stop offset="100%" style={{ stopColor: "#84CC16" }} />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M20 10 L20 90 L40 90 Q50 90 50 80 L50 20 Q50 10 40 10 Z M60 10 L80 10 L80 90 Q70 90 60 80 L60 20 Q60 10 70 10 Z"
+                    fill="url(#tactixGradient)"
+                    stroke="none"
+                  />
+                  <text
+                    x="50"
+                    y="65"
+                    fontFamily="Arial, sans-serif"
+                    fontSize="30"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    fill="white"
+                    className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]"
+                  >
+                    TX
+                  </text>
+                  <text
+                    x="65"
+                    y="85"
+                    fontFamily="Arial, sans-serif"
+                    fontSize="10"
+                    fontWeight="normal"
+                    fill="white"
+                    className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]"
+                  >
+                    ™
+                  </text>
+                </svg>
+                <span className="absolute text-xs font-semibold text-white -rotate-12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 dark:bg-lime-600 px-1 rounded-sm">
+                  Tactix
+                </span>
+              </div>
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -168,7 +247,7 @@ export default function FantasyFootballWebsite() {
                 { name: "Home", href: "#home" },
                 { name: "Features", href: "#features" },
                 { name: "Download", href: "#download" },
-                { name: "Contact", href: "#contact" }, // Added Contact link
+                { name: "Contact", href: "#contact" },
               ].map((item) => (
                 <motion.a
                   key={item.name}
@@ -232,7 +311,7 @@ export default function FantasyFootballWebsite() {
                 { name: "Home", href: "#home" },
                 { name: "Features", href: "#features" },
                 { name: "Download", href: "#download" },
-                { name: "Contact", href: "#contact" }, // Added Contact link
+                { name: "Contact", href: "#contact" },
               ].map((item) => (
                 <a
                   key={item.name}
@@ -269,39 +348,54 @@ export default function FantasyFootballWebsite() {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative order-first lg:order-first"
+              className="relative order-first lg:order-first flex flex-col items-center"
             >
-              <motion.div
-                animate={{
-                  y: [-10, 10, -10],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-                className="relative z-10"
-              >
-                <div
-                  className="relative mx-auto"
-                  style={{ width: "300px", height: "600px" }}
-                >
-                  <div className="absolute inset-0 bg-gray-900 rounded-[3rem] shadow-2xl">
-                    <div className="absolute inset-2 bg-black rounded-[2.5rem] p-2">
-                      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10"></div>
-                      <div className="w-full h-full rounded-[2rem] overflow-hidden">
-                        <Image
-                          src="/kuas.jpg"
-                          alt="Tactix App Interface"
-                          width={300}
-                          height={600}
-                          className="w-full h-full object-cover"
-                        />
+              {/* Three iPhone Frames arranged like a card fan */}
+              <div className="relative flex items-center justify-center space-x-[-40px]">
+                {leagueLeaders.map((leader, index) => (
+                  <motion.div
+                    key={leader.rank}
+                    initial={{ rotate: (index - 1) * 15, x: (index - 1) * 50 }}
+                    animate={{ rotate: (index - 1) * 15, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ originX: 0.5, originY: 0.5 }}
+                    className={`z-${10 + index}`}
+                  >
+                    <IPhoneFrame>
+                      <div className="h-full bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950 p-4 overflow-y-auto">
+                        <div className="flex flex-col h-full">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                            Rank #{leader.rank}
+                          </h3>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            Leader: {leader.name}
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            Successor: {leader.successor}
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            Points: {leader.points}
+                          </p>
+                          <div className="mt-2">
+                            <span
+                              className={`w-3 h-3 rounded-full inline-block mr-2 ${
+                                leader.winningStreak
+                                  ? "bg-green-500"
+                                  : "bg-red-500"
+                              }`}
+                            ></span>
+                            <span className="text-xs text-gray-600 dark:text-gray-400">
+                              {leader.winningStreak
+                                ? "Winning Streak Active"
+                                : "No Streak"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+                    </IPhoneFrame>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
 
             <motion.div
@@ -347,29 +441,6 @@ export default function FantasyFootballWebsite() {
                 className="flex flex-col items-center lg:items-start space-y-6 mt-12"
               >
                 <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6">
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-6">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-lime-400">
-                        20+
-                      </div>
-                      <div className="text-sm text-gray-300">
-                        Active Players
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-green-400">
-                        4.9
-                      </div>
-                      <div className="text-sm text-gray-300">App Rating</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-emerald-400">
-                        50+
-                      </div>
-                      <div className="text-sm text-gray-300">Daily Matches</div>
-                    </div>
-                  </div>
-
                   <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                     <motion.a
                       href="https://www.apple.com/app-store/"
@@ -475,19 +546,6 @@ export default function FantasyFootballWebsite() {
                     </motion.a>
                   </div>
                 </div>
-
-                {/* Add Contact CTA */}
-                <motion.a
-                  href="#contact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-block mt-4"
-                >
-                  <Button className="bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700 text-white px-6 py-3 text-lg">
-                    Contact Us
-                    <Send className="ml-2 w-5 h-5" />
-                  </Button>
-                </motion.a>
               </motion.div>
             </motion.div>
           </div>
