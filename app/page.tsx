@@ -63,7 +63,315 @@ export default function FantasyFootballWebsite() {
     subject: "",
     message: "",
   });
+  function LiveStatsSVG() {
+    return (
+      <svg
+        viewBox="0 0 360 780"
+        preserveAspectRatio="xMidYMid slice"
+        className="w-full h-full"
+      >
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          rx="28"
+          ry="28"
+          fill="url(#bg1)"
+        />
+        <defs>
+          <linearGradient id="bg1" x1="0" x2="1">
+            <stop offset="0" stopColor="#f6fff0" />
+            <stop offset="1" stopColor="#eefcf2" />
+          </linearGradient>
+        </defs>
 
+        {/* header */}
+        <rect
+          x="16"
+          y="18"
+          width="328"
+          height="52"
+          rx="12"
+          fill="#0f172a"
+          opacity="0.08"
+        />
+        <circle cx="40" cy="44" r="8" fill="#10b981" />
+        <rect
+          x="64"
+          y="34"
+          width="200"
+          height="6"
+          rx="3"
+          fill="#0f172a"
+          opacity="0.12"
+        />
+
+        {/* big score */}
+        <text x="28" y="110" fontSize="34" fontWeight="700" fill="#0f172a">
+          2
+        </text>
+        <text x="76" y="110" fontSize="20" fill="#6b7280">
+          {" "}
+          -{" "}
+        </text>
+        <text x="100" y="110" fontSize="34" fontWeight="700" fill="#0f172a">
+          1
+        </text>
+        <text x="28" y="140" fontSize="12" fill="#6b7280">
+          HT • 45'
+        </text>
+
+        {/* small live spark */}
+        <rect x="240" y="86" width="80" height="28" rx="8" fill="#ffedd5" />
+        <text x="252" y="106" fontSize="12" fontWeight="600" fill="#b45309">
+          LIVE
+        </text>
+
+        {/* line graph */}
+        <g transform="translate(20,180)">
+          <rect width="320" height="160" rx="12" fill="#fff" opacity="0.7" />
+          <polyline
+            points="12,120 48,84 96,100 144,56 192,76 240,32 288,48"
+            fill="none"
+            stroke="#059669"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* x ticks */}
+          <g fill="#94a3b8" fontSize="10">
+            <text x="12" y="145">
+              10'
+            </text>
+            <text x="96" y="145">
+              20'
+            </text>
+            <text x="192" y="145">
+              35'
+            </text>
+            <text x="288" y="145">
+              45'
+            </text>
+          </g>
+        </g>
+
+        {/* small stat chips */}
+        <g transform="translate(20,360)">
+          <rect
+            x="0"
+            y="0"
+            width="102"
+            height="72"
+            rx="10"
+            fill="#000"
+            opacity="0.05"
+          />
+          <text x="12" y="24" fontSize="12" fill="#065f46">
+            Shots
+          </text>
+          <text x="12" y="50" fontSize="20" fontWeight="700" fill="#0f172a">
+            8
+          </text>
+
+          <rect
+            x="122"
+            y="0"
+            width="102"
+            height="72"
+            rx="10"
+            fill="#000"
+            opacity="0.05"
+          />
+          <text x="134" y="24" fontSize="12" fill="#065f46">
+            Poss%
+          </text>
+          <text x="134" y="50" fontSize="20" fontWeight="700" fill="#0f172a">
+            62%
+          </text>
+
+          <rect
+            x="244"
+            y="0"
+            width="76"
+            height="72"
+            rx="10"
+            fill="#000"
+            opacity="0.05"
+          />
+          <text x="256" y="24" fontSize="12" fill="#065f46">
+            Fouls
+          </text>
+          <text x="256" y="50" fontSize="20" fontWeight="700" fill="#0f172a">
+            3
+          </text>
+        </g>
+
+        {/* footer nav */}
+        <g transform="translate(0,720)">
+          <rect
+            x="28"
+            y="0"
+            width="304"
+            height="44"
+            rx="12"
+            fill="#0f172a"
+            opacity="0.06"
+          />
+          <circle cx="64" cy="22" r="8" fill="#10b981" />
+          <circle cx="128" cy="22" r="6" fill="#94a3b8" />
+          <circle cx="192" cy="22" r="6" fill="#94a3b8" />
+          <circle cx="256" cy="22" r="6" fill="#94a3b8" />
+        </g>
+      </svg>
+    );
+  }
+
+  function LeagueRankingsSVG() {
+    return (
+      <svg
+        viewBox="0 0 360 780"
+        preserveAspectRatio="xMidYMid slice"
+        className="w-full h-full"
+      >
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          rx="28"
+          ry="28"
+          fill="url(#bg2)"
+        />
+        <defs>
+          <linearGradient id="bg2" x1="0" x2="1">
+            <stop offset="0" stopColor="#f0fdfa" />
+            <stop offset="1" stopColor="#ecfdf5" />
+          </linearGradient>
+        </defs>
+
+        <text x="24" y="48" fontSize="16" fontWeight="700" fill="#065f46">
+          League Rankings
+        </text>
+
+        {/* list rows */}
+        <g transform="translate(24,78)">
+          {[1, 2, 3, 4, 5].map((n, i) => (
+            <g key={i} transform={`translate(0, ${i * 64})`}>
+              <rect x="0" y="0" width="312" height="52" rx="10" fill="#fff" />
+              <text x="14" y="34" fontSize="18" fontWeight="700" fill="#0f172a">
+                {i + 1}
+              </text>
+              <circle cx="58" cy="26" r="14" fill="#fde68a" />
+              <text x="86" y="34" fontSize="14" fill="#0f172a">
+                Team {i + 1}
+              </text>
+              <text x="240" y="34" fontSize="14" fill="#6b7280">
+                {20 - i * 3} pts
+              </text>
+            </g>
+          ))}
+        </g>
+
+        {/* mini sparkline per team */}
+        <g transform="translate(24,420)">
+          <text x="0" y="0" fontSize="12" fill="#6b7280">
+            Form
+          </text>
+          <g transform="translate(0,12)">
+            {[0, 1, 2, 3, 4].map((r, idx) => (
+              <rect
+                key={idx}
+                x={idx * 24}
+                y={Math.abs(12 - idx * 6)}
+                width="12"
+                height={12 + idx * 4}
+                rx="2"
+                fill={idx % 2 ? "#34d399" : "#bbf7d0"}
+              />
+            ))}
+          </g>
+        </g>
+      </svg>
+    );
+  }
+
+  function TeamManagementSVG() {
+    return (
+      <svg
+        viewBox="0 0 360 780"
+        preserveAspectRatio="xMidYMid slice"
+        className="w-full h-full"
+      >
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          rx="28"
+          ry="28"
+          fill="url(#bg3)"
+        />
+        <defs>
+          <linearGradient id="bg3" x1="0" x2="1">
+            <stop offset="0" stopColor="#f7f7ff" />
+            <stop offset="1" stopColor="#f0f4ff" />
+          </linearGradient>
+        </defs>
+
+        <text x="24" y="48" fontSize="16" fontWeight="700" fill="#1e293b">
+          Team
+        </text>
+
+        {/* roster avatars */}
+        <g transform="translate(24,86)">
+          {["A", "B", "C", "D", "E"].map((l, i) => (
+            <g key={i} transform={`translate(0, ${i * 56})`}>
+              <circle cx="26" cy="16" r="18" fill="#c7d2fe" />
+              <text x="20" y="22" fontSize="14" fontWeight="700" fill="#3730a3">
+                {l}
+              </text>
+              <text x="64" y="22" fontSize="14" fill="#0f172a">
+                Player {i + 1}
+              </text>
+              <rect
+                x="260"
+                y="6"
+                width="50"
+                height="20"
+                rx="8"
+                fill={i === 0 ? "#34d399" : "#e5e7eb"}
+              />
+              <text
+                x="274"
+                y="20"
+                fontSize="11"
+                fill={i === 0 ? "#064e3b" : "#6b7280"}
+                textAnchor="middle"
+              >
+                {i === 0 ? "C" : "BEN"}
+              </text>
+            </g>
+          ))}
+        </g>
+
+        {/* tactics mini */}
+        <g transform="translate(24,380)">
+          <rect x="0" y="0" width="312" height="140" rx="12" fill="#fff" />
+          <text x="12" y="22" fontSize="14" fill="#0f172a">
+            Tactics Board
+          </text>
+
+          {/* mini pitch */}
+          <rect x="24" y="36" width="264" height="84" rx="8" fill="#ecfeff" />
+          <circle cx="70" cy="78" r="8" fill="#60a5fa" />
+          <circle cx="120" cy="52" r="8" fill="#60a5fa" />
+          <circle cx="200" cy="36" r="8" fill="#60a5fa" />
+          <circle cx="250" cy="76" r="8" fill="#60a5fa" />
+        </g>
+      </svg>
+    );
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -174,71 +482,29 @@ export default function FantasyFootballWebsite() {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 w-full z-50 bg-green-500 dark:bg-gray-900/80 backdrop-blur-lg border-b border-green-200 dark:border-green-800"
+        className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-green-200 dark:border-green-800"
       >
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-around">
+            {/* Brand Logo / Wordmark */}
             <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
               className="flex items-center space-x-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <div className="relative flex items-center justify-center">
-                <svg
-                  width="80"
-                  height="80"
-                  viewBox="0 0 100 100"
-                  className="text-green-600 dark:text-lime-400"
-                  style={{
-                    filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2))",
-                  }}
-                >
-                  <defs>
-                    <linearGradient
-                      id="tactixGradient"
-                      x1="0%"
-                      y1="0%"
-                      x2="100%"
-                      y2="100%"
-                    >
-                      <stop offset="0%" style={{ stopColor: "#10B981" }} />
-                      <stop offset="100%" style={{ stopColor: "#84CC16" }} />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M20 10 L20 90 L40 90 Q50 90 50 80 L50 20 Q50 10 40 10 Z M60 10 L80 10 L80 90 Q70 90 60 80 L60 20 Q60 10 70 10 Z"
-                    fill="url(#tactixGradient)"
-                    stroke="none"
-                  />
-                  <text
-                    x="50"
-                    y="65"
-                    fontFamily="Arial, sans-serif"
-                    fontSize="30"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                    fill="white"
-                    className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]"
-                  >
-                    TX
-                  </text>
-                  <text
-                    x="65"
-                    y="85"
-                    fontFamily="Arial, sans-serif"
-                    fontSize="10"
-                    fontWeight="normal"
-                    fill="white"
-                    className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]"
-                  >
-                    ™
-                  </text>
-                </svg>
-                <span className="absolute text-xs font-semibold text-white -rotate-12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 dark:bg-lime-600 px-1 rounded-sm">
-                  Tactix
-                </span>
-              </div>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                }}
+                className="text-2xl font-bold text-green-600 dark:text-green-300 tracking-tight bg-gradient-to-r from-lime-400 via-green-400 to-emerald-400 bg-clip-text text-transparent"
+              >
+                Tactix<span className="align-super text-xs ml-1">™</span>
+              </motion.span>
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -332,16 +598,6 @@ export default function FantasyFootballWebsite() {
         id="home"
         className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
       >
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/hero.jpg"
-            alt="Football Stadium Background"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 via-lime-900/60 to-emerald-900/80" />
-        </div>
-
         <div className="container mx-auto px-4 z-10 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -350,51 +606,38 @@ export default function FantasyFootballWebsite() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative order-first lg:order-first flex flex-col items-center"
             >
-              {/* Three iPhone Frames arranged like a card fan */}
               <div className="relative flex items-center justify-center space-x-[-40px]">
-                {leagueLeaders.map((leader, index) => (
-                  <motion.div
-                    key={leader.rank}
-                    initial={{ rotate: (index - 1) * 15, x: (index - 1) * 50 }}
-                    animate={{ rotate: (index - 1) * 15, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{ originX: 0.5, originY: 0.5 }}
-                    className={`z-${10 + index}`}
-                  >
-                    <IPhoneFrame>
-                      <div className="h-full bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950 p-4 overflow-y-auto">
-                        <div className="flex flex-col h-full">
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                            Rank #{leader.rank}
-                          </h3>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Leader: {leader.name}
-                          </p>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Successor: {leader.successor}
-                          </p>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Points: {leader.points}
-                          </p>
-                          <div className="mt-2">
-                            <span
-                              className={`w-3 h-3 rounded-full inline-block mr-2 ${
-                                leader.winningStreak
-                                  ? "bg-green-500"
-                                  : "bg-red-500"
-                              }`}
-                            ></span>
-                            <span className="text-xs text-gray-600 dark:text-gray-400">
-                              {leader.winningStreak
-                                ? "Winning Streak Active"
-                                : "No Streak"}
-                            </span>
-                          </div>
+                {[
+                  { Component: LiveStatsSVG, key: "live" },
+                  { Component: LeagueRankingsSVG, key: "rank" },
+                  { Component: TeamManagementSVG, key: "team" },
+                ].map((item, index) => {
+                  const visibleClasses = index === 0 ? "" : "hidden lg:block";
+                  // sizing: mobile shows a single bigger frame; lg shows three smaller frames fanned
+                  const sizeClasses =
+                    "max-w-[260px] sm:max-w-[300px] lg:max-w-[320px] xl:max-w-[340px] w-full";
+                  return (
+                    <motion.div
+                      key={item.key}
+                      initial={{
+                        rotate: (index - 1) * 15,
+                        x: (index - 1) * 50,
+                        scale: index === 0 ? 1.03 : 0.98,
+                      }}
+                      animate={{ rotate: (index - 1) * 15, x: 0, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ originX: 0.5, originY: 0.5 }}
+                      className={`${visibleClasses} ${sizeClasses} z-${10 + index}`}
+                    >
+                      <IPhoneFrame>
+                        <div className="h-full w-full overflow-hidden rounded-2xl">
+                          {/* Render the SVG mockup */}
+                          <item.Component />
                         </div>
-                      </div>
-                    </IPhoneFrame>
-                  </motion.div>
-                ))}
+                      </IPhoneFrame>
+                    </motion.div>
+                  );
+                })}
               </div>
             </motion.div>
 
@@ -408,7 +651,7 @@ export default function FantasyFootballWebsite() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight"
+                className="text-5xl md:text-7xl font-bold mb-6 text-black dark:text-white leading-tight"
               >
                 Master Your
                 <br />
@@ -427,7 +670,7 @@ export default function FantasyFootballWebsite() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="text-xl text-gray-200 mb-8 max-w-lg"
+                className="text-xl text-green-600 mb-8 max-w-lg"
               >
                 Experience the ultimate fantasy football platform with advanced
                 tactics, real-time analytics, and competitive gameplay that puts
@@ -991,54 +1234,15 @@ export default function FantasyFootballWebsite() {
               </Card>
             </motion.div>
 
-            {/* SMTP Test Button (Development Only) */}
-            {process.env.NODE_ENV === "development" && (
-              <div className="text-center mb-8">
-                <Button
-                  onClick={testConnection}
-                  disabled={isTesting}
-                  variant="outline"
-                  size="sm"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-                >
-                  {isTesting ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Testing...
-                    </div>
-                  ) : (
-                    <>
-                      <Settings className="w-4 h-4 mr-2" />
-                      Test SMTP
-                    </>
-                  )}
-                </Button>
-                {smtpStatus && (
-                  <div
-                    className={`mt-4 p-3 rounded-lg flex items-center justify-center ${
-                      smtpStatus.type === "success"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                    }`}
-                  >
-                    {smtpStatus.type === "success" ? (
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                    ) : (
-                      <AlertCircle className="w-5 h-5 mr-2" />
-                    )}
-                    {smtpStatus.message}
-                  </div>
-                )}
-              </div>
-            )}
+           
 
-            <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+            <div className=" max-w-7xl mx-auto">
               {/* Contact Methods - Tactical Formation */}
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="space-y-6"
+                className="space-y-6 flex flex-col justify-between items-center"
               >
                 <div className="text-center mb-8">
                   <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
@@ -1108,154 +1312,6 @@ export default function FantasyFootballWebsite() {
                     </Card>
                   </motion.div>
                 </div>
-              </motion.div>
-
-              {/* iPhone Contact Form */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="flex justify-center"
-              >
-                <IPhoneFrame>
-                  <div className="h-full bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950 p-4 overflow-y-auto">
-                    <div className="text-center mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Trophy className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Tactics PLC
-                      </h3>
-                      <p className="text-sm text-gray-600">Contact Command</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Input
-                            placeholder="First Name"
-                            value={formData.firstName}
-                            onChange={(e) =>
-                              handleInputChange("firstName", e.target.value)
-                            }
-                            className="text-sm border-green-200 dark:border-green-800"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Input
-                            placeholder="Last Name"
-                            value={formData.lastName}
-                            onChange={(e) =>
-                              handleInputChange("lastName", e.target.value)
-                            }
-                            className="text-sm border-green-200 dark:border-green-800"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <Input
-                        type="email"
-                        placeholder="Email Address"
-                        value={formData.email}
-                        onChange={(e) =>
-                          handleInputChange("email", e.target.value)
-                        }
-                        className="text-sm border-green-200 dark:border-green-800"
-                        required
-                      />
-
-                      <Select
-                        onValueChange={(value) =>
-                          handleInputChange("subject", value)
-                        }
-                        required
-                      >
-                        <SelectTrigger className="text-sm border-green-200 dark:border-green-800">
-                          <SelectValue placeholder="Select Topic" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Account Issues">
-                            Account Issues
-                          </SelectItem>
-                          <SelectItem value="Technical Support">
-                            Technical Support
-                          </SelectItem>
-                          <SelectItem value="Billing Questions">
-                            Billing Questions
-                          </SelectItem>
-                          <SelectItem value="Feature Request">
-                            Feature Request
-                          </SelectItem>
-                          <SelectItem value="General Inquiry">
-                            General Inquiry
-                          </SelectItem>
-                          <SelectItem value="Partnership">
-                            Partnership
-                          </SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      <Textarea
-                        placeholder="Describe your tactical challenge..."
-                        value={formData.message}
-                        onChange={(e) =>
-                          handleInputChange("message", e.target.value)
-                        }
-                        rows={4}
-                        className="text-sm border-green-200 dark:border-green-800 resize-none"
-                        required
-                      />
-
-                      <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-green-600 to-lime-600 hover:from-green-700 hover:to-lime-700 text-sm"
-                      >
-                        {isSubmitting ? (
-                          <div className="flex items-center">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                            Deploying...
-                          </div>
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 mr-2" />
-                            Execute Mission
-                          </>
-                        )}
-                      </Button>
-
-                      {submitStatus && (
-                        <div
-                          className={`text-center text-sm p-3 rounded-lg flex items-center ${
-                            submitStatus.type === "success"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                          }`}
-                        >
-                          {submitStatus.type === "success" ? (
-                            <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
-                          ) : (
-                            <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
-                          )}
-                          <span className="text-left">
-                            {submitStatus.message}
-                          </span>
-                        </div>
-                      )}
-                    </form>
-
-                    <div className="mt-6 text-center">
-                      <div className="flex justify-center space-x-4 text-xs text-gray-500">
-                        <span>🏆 Secure</span>
-                        <span>⚡ Fast</span>
-                        <span>🎯 Precise</span>
-                      </div>
-                    </div>
-                  </div>
-                </IPhoneFrame>
               </motion.div>
             </div>
           </div>
