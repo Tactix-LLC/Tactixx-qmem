@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +41,7 @@ import {
   Send,
   Settings,
   AlertCircle,
+  Clock,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -42,6 +51,46 @@ import { IPhoneFrame } from "@/components/iphone-frame";
 import { sendEmail, testSMTPConnection } from "@/lib/email-service";
 
 export default function FantasyFootballWebsite() {
+  const [activeTab, setActiveTab] = useState(0);
+  const contactMethods = [
+    {
+      icon: <Mail className="w-8 h-8 text-white" />,
+      title: "Email Playbook",
+      subtitle: "Hail Mary Pass",
+      contact: (
+        <a
+          href="mailto:support@tacticsplc.com"
+          className="hover:text-green-500 transition-colors duration-200"
+        >
+          support@tacticsplc.com
+        </a>
+      ),
+      details: "Instant play execution within 10 hours",
+      buttonText: "Launch Email",
+      buttonAction: () =>
+        (window.location.href = "mailto:support@tacticsplc.com"),
+      gradient: "from-green-500 to-lime-400",
+      textColor: "text-green-600",
+    },
+    {
+      icon: <Phone className="w-8 h-8 text-white" />,
+      title: "Direct Blitz Line",
+      subtitle: "Quick Snap",
+      contact: (
+        <a
+          href="tel:+15551234567"
+          className="hover:text-green-500 transition-colors duration-200"
+        >
+          +1 (555) 123-4567
+        </a>
+      ),
+      details: "Live play-calling Mon-Sat, 7AM-9PM EST",
+      buttonText: "Call the Play",
+      buttonAction: () => (window.location.href = "tel:+15551234567"),
+      gradient: "from-lime-400 to-emerald-500",
+      textColor: "text-emerald-600",
+    },
+  ];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { scrollYProgress } = useScroll();
@@ -63,6 +112,305 @@ export default function FantasyFootballWebsite() {
     subject: "",
     message: "",
   });
+  const HowToPlay = () => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+    const containerVariants = {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.15,
+        },
+      },
+    };
+
+    const itemVariants = {
+      hidden: { opacity: 0, y: 20 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          duration: 0.5,
+          ease: "easeOut",
+        },
+      },
+    };
+
+    const cardVariants = {
+      rest: { scale: 1, boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" },
+      hover: {
+        scale: 1.03,
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)",
+        transition: { duration: 0.3 },
+      },
+      tap: { scale: 0.98 },
+    };
+
+    return (
+      <section
+        id="how-to-play"
+        className="py-16 sm:py-20 bg-transparent dark:from-green-950 dark:to-lime-950 relative overflow-hidden"
+        ref={ref}
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <motion.div
+            className="text-center mb-12 sm:mb-16 relative z-10"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              Getting Started
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
+              Master the Game
+            </h2>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Learn how to dominate your fantasy league with our comprehensive
+              step-by-step guide
+            </p>
+          </motion.div>
+
+          {/* Cosmic Soccer Pitch Background */}
+          <div className="relative max-w-7xl mx-auto">
+            {/* Pitch Overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#4ade80_0%,transparent_70%)] opacity-5 animate-pulse"></div>
+            {/* Particle Effects */}
+            <div className="absolute inset-0 pointer-events-none">
+              <motion.span
+                className="absolute w-2 h-2 bg-green-400 rounded-full top-10 left-10"
+                animate={{ y: [0, -8, 0], opacity: [1, 0.4, 1] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.span
+                className="absolute w-3 h-3 bg-lime-400 rounded-full top-20 right-20"
+                animate={{ y: [0, -12, 0], opacity: [1, 0.4, 1] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2.5,
+                  ease: "easeInOut",
+                  delay: 0.5,
+                }}
+              />
+              <motion.span
+                className="absolute w-2 h-2 bg-green-500 rounded-full bottom-10 left-1/3"
+                animate={{ y: [0, -10, 0], opacity: [1, 0.4, 1] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+              />
+            </div>
+
+            {/* Steps as Interactive Cards */}
+            <motion.div
+              className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+            >
+              {[
+                {
+                  step: "01",
+                  title: "Create Your Account",
+                  description:
+                    "Sign up with your email or social media account to get started",
+                  details: [
+                    "Choose a unique username that represents your tactical style",
+                    "Verify your email address to secure your account",
+                    "Complete your profile with your favorite team and position preferences",
+                    "Set up your notification preferences for match updates",
+                  ],
+                  zone: "Goal Area",
+                },
+                {
+                  step: "02",
+                  title: "Build Your Dream Team",
+                  description:
+                    "Select 11 players within the £100 million budget constraint",
+                  details: [
+                    "Choose 1 Goalkeeper, 3-5 Defenders, 3-5 Midfielders, 1-3 Forwards",
+                    "Stay within the £100 million budget limit",
+                    "Maximum 3 players from any single team",
+                    "Consider player form, fixtures, and injury status",
+                  ],
+                  zone: "Defense Line",
+                },
+                {
+                  step: "03",
+                  title: "Set Your Formation & Captain",
+                  description:
+                    "Deploy tactical formations and select your captain for double points",
+                  details: [
+                    "Choose from 5 formations: 3-4-3, 3-5-2, 4-3-3, 4-4-2, 4-5-1",
+                    "Select your captain (2x points) and vice-captain (1.5x points if captain doesn't play)",
+                    "Arrange your starting XI and bench players strategically",
+                    "Use tactical boosts and power-ups when available",
+                  ],
+                  zone: "Midfield",
+                },
+                {
+                  step: "04",
+                  title: "Join Leagues & Compete",
+                  description:
+                    "Enter leagues with friends or compete in global tournaments",
+                  details: [
+                    "Create private leagues with friends, family, or colleagues",
+                    "Join public leagues to compete with players worldwide",
+                    "Participate in special tournaments and seasonal events",
+                    "Track your progress on global and league leaderboards",
+                  ],
+                  zone: "Attack Line",
+                },
+                {
+                  step: "05",
+                  title: "Manage Your Team Weekly",
+                  description:
+                    "Make transfers, adjust tactics, and optimize your squad each gameweek",
+                  details: [
+                    "Make up to 1 free transfer per gameweek (additional transfers cost 4 points)",
+                    "Use your Wildcard to make unlimited free transfers twice per season",
+                    "Monitor player prices and make strategic transfers to gain team value",
+                    "Set your lineup before each gameweek deadline",
+                  ],
+                  zone: "Opponent's Goal",
+                },
+              ].map((instruction, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                  animate="rest"
+                  custom={cardVariants}
+                >
+                  <Card
+                    className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-green-200 dark:border-green-800 hover:shadow-xl transition-all duration-300"
+                    role="article"
+                    aria-labelledby={`step-title-${index}`}
+                  >
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full z-10">
+                      {instruction.zone}
+                    </div>
+                    <CardHeader className="pt-8 pb-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4 mx-auto">
+                        {instruction.step}
+                      </div>
+                      <CardTitle
+                        id={`step-title-${index}`}
+                        className="text-lg sm:text-xl lg:text-2xl text-center text-gray-900 dark:text-white"
+                      >
+                        {instruction.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm sm:text-base text-center">
+                        {instruction.description}
+                      </p>
+                      <ul className="space-y-2">
+                        {instruction.details.map((detail, detailIndex) => (
+                          <li
+                            key={detailIndex}
+                            className="flex items-start gap-2"
+                          >
+                            <svg
+                              className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            <span className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+                              {detail}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Summary Cards */}
+          <motion.div
+            className="max-w-7xl mx-auto mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            {[
+              {
+                step: "01",
+                title: "Build Your Team",
+                description:
+                  "Select players within budget constraints and create your ultimate fantasy squad",
+              },
+              {
+                step: "02",
+                title: "Deploy Tactics",
+                description:
+                  "Use our advanced tactical system to optimize formations and player positions",
+              },
+              {
+                step: "03",
+                title: "Compete & Win",
+                description:
+                  "Join leagues, track performance, and climb the leaderboards for massive rewards",
+              },
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                whileHover="hover"
+                whileTap="tap"
+                animate="rest"
+                custom={cardVariants}
+              >
+                <Card
+                  className="text-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-green-200 dark:border-green-800 hover:shadow-xl transition-all duration-300"
+                  role="article"
+                  aria-labelledby={`summary-title-${index}`}
+                >
+                  <CardContent className="p-6">
+                    <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-xl font-bold">
+                      {step.step}
+                    </div>
+                    <CardTitle
+                      id={`summary-title-${index}`}
+                      className="text-lg sm:text-xl lg:text-2xl mb-3 text-gray-900 dark:text-white"
+                    >
+                      {step.title}
+                    </CardTitle>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+    );
+  };
   function LiveStatsSVG() {
     return (
       <svg
@@ -878,214 +1226,16 @@ export default function FantasyFootballWebsite() {
       <PartnersSection />
 
       {/* How to Play Section */}
-      <section
-        id="how-to-play"
-        className="py-20 bg-transparent backdrop-blur-sm"
-      >
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-              Getting Started
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
-              Master the Game
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Learn how to dominate your fantasy league with our comprehensive
-              step-by-step guide
-            </p>
-          </motion.div>
-
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative mb-16"
-            >
-              <div className="relative bg-gray-800 rounded-t-xl p-2 shadow-2xl">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                </div>
-                <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden min-h-[500px]">
-                  <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                      <div className="flex-1 bg-white dark:bg-gray-700 rounded px-3 py-1 text-sm text-gray-600 dark:text-gray-300">
-                        tacticsplc.com/how-to-play
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-8 space-y-8">
-                    {[
-                      {
-                        step: "01",
-                        title: "Create Your Account",
-                        description:
-                          "Sign up with your email or social media account to get started",
-                        details: [
-                          "Choose a unique username that represents your tactical style",
-                          "Verify your email address to secure your account",
-                          "Complete your profile with your favorite team and position preferences",
-                          "Set up your notification preferences for match updates",
-                        ],
-                      },
-                      {
-                        step: "02",
-                        title: "Build Your Dream Team",
-                        description:
-                          "Select 11 players within the £100 million budget constraint",
-                        details: [
-                          "Choose 1 Goalkeeper, 3-5 Defenders, 3-5 Midfielders, 1-3 Forwards",
-                          "Stay within the £100 million budget limit",
-                          "Maximum 3 players from any single team",
-                          "Consider player form, fixtures, and injury status",
-                        ],
-                      },
-                      {
-                        step: "03",
-                        title: "Set Your Formation & Captain",
-                        description:
-                          "Deploy tactical formations and select your captain for double points",
-                        details: [
-                          "Choose from 5 formations: 3-4-3, 3-5-2, 4-3-3, 4-4-2, 4-5-1",
-                          "Select your captain (2x points) and vice-captain (1.5x points if captain doesn't play)",
-                          "Arrange your starting XI and bench players strategically",
-                          "Use tactical boosts and power-ups when available",
-                        ],
-                      },
-                      {
-                        step: "04",
-                        title: "Join Leagues & Compete",
-                        description:
-                          "Enter leagues with friends or compete in global tournaments",
-                        details: [
-                          "Create private leagues with friends, family, or colleagues",
-                          "Join public leagues to compete with players worldwide",
-                          "Participate in special tournaments and seasonal events",
-                          "Track your progress on global and league leaderboards",
-                        ],
-                      },
-                      {
-                        step: "05",
-                        title: "Manage Your Team Weekly",
-                        description:
-                          "Make transfers, adjust tactics, and optimize your squad each gameweek",
-                        details: [
-                          "Make up to 1 free transfer per gameweek (additional transfers cost 4 points)",
-                          "Use your Wildcard to make unlimited free transfers twice per season",
-                          "Monitor player prices and make strategic transfers to gain team value",
-                          "Set your lineup before each gameweek deadline",
-                        ],
-                      },
-                    ].map((instruction, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: index * 0.1 }}
-                        className="flex gap-6"
-                      >
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                            {instruction.step}
-                          </div>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-                            {instruction.title}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-300 mb-4 text-lg">
-                            {instruction.description}
-                          </p>
-                          <ul className="space-y-2">
-                            {instruction.details.map((detail, detailIndex) => (
-                              <motion.li
-                                key={detailIndex}
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{
-                                  duration: 0.4,
-                                  delay: detailIndex * 0.1,
-                                }}
-                                className="flex items-start gap-3"
-                              >
-                                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-600 dark:text-gray-300">
-                                  {detail}
-                                </span>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-300 dark:bg-gray-700 h-4 rounded-b-xl"></div>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  step: "01",
-                  title: "Build Your Team",
-                  description:
-                    "Select players within budget constraints and create your ultimate fantasy squad",
-                },
-                {
-                  step: "02",
-                  title: "Deploy Tactics",
-                  description:
-                    "Use our advanced tactical system to optimize formations and player positions",
-                },
-                {
-                  step: "03",
-                  title: "Compete & Win",
-                  description:
-                    "Join leagues, track performance, and climb the leaderboards for massive rewards",
-                },
-              ].map((step, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  className="text-center"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">
-                    {step.step}
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {step.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <HowToPlay />
 
       {/* Contact Section */}
       <section
         id="contact"
-        className="py-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
+        className="py-28 bg-gradient-to-b from-gray-100 to-green-100/80 dark:from-gray-900 dark:to-green-900/80 backdrop-blur-lg relative overflow-hidden"
       >
-        <div className="container mx-auto px-4">
-          {/* Tactical Elements Overlay */}
-          <div className="absolute inset-0 z-0 opacity-10 dark:opacity-5">
+        <div className="container mx-auto px-6">
+          {/* Tactical Elements Overlay - Game-like HUD */}
+          <div className="absolute inset-0 z-0 opacity-20 dark:opacity-15 pointer-events-none">
             <svg
               width="100%"
               height="100%"
@@ -1095,222 +1245,276 @@ export default function FantasyFootballWebsite() {
               <defs>
                 <marker
                   id="tacticalArrow"
-                  markerWidth="12"
-                  markerHeight="8"
-                  refX="11"
-                  refY="4"
+                  markerWidth="16"
+                  markerHeight="12"
+                  refX="14"
+                  refY="6"
                   orient="auto"
                 >
                   <polygon
-                    points="0 0, 12 4, 0 8"
+                    points="0 0, 16 6, 0 12"
                     fill="currentColor"
-                    className="text-green-600"
+                    className="text-green-400 drop-shadow-glow"
                   />
                 </marker>
               </defs>
-              <motion.line
-                x1="100"
-                y1="100"
-                x2="300"
-                y2="200"
+              <motion.circle
+                cx="150"
+                cy="150"
+                r="30"
+                fill="none"
                 stroke="currentColor"
-                strokeWidth="3"
-                className="text-green-600"
+                strokeWidth="4"
+                className="text-green-400"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.2, 1], opacity: 1 }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.line
+                x1="150"
+                y1="150"
+                x2="400"
+                y2="250"
+                stroke="currentColor"
+                strokeWidth="5"
+                className="text-green-400"
                 markerEnd="url(#tacticalArrow)"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
                   duration: 2,
                   repeat: Number.POSITIVE_INFINITY,
                   repeatType: "reverse",
+                  ease: "easeInOut",
                 }}
               />
               <motion.line
-                x1="900"
-                y1="150"
-                x2="700"
-                y2="250"
+                x1="850"
+                y1="200"
+                x2="600"
+                y2="300"
                 stroke="currentColor"
-                strokeWidth="3"
-                className="text-lime-600"
+                strokeWidth="5"
+                className="text-lime-400"
                 markerEnd="url(#tacticalArrow)"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
-                  duration: 2.5,
+                  duration: 2.3,
                   repeat: Number.POSITIVE_INFINITY,
                   repeatType: "reverse",
-                  delay: 0.5,
+                  delay: 0.7,
+                  ease: "easeInOut",
                 }}
               />
-              <motion.line
-                x1="200"
-                y1="600"
-                x2="400"
-                y2="500"
+              <motion.circle
+                cx="300"
+                cy="600"
+                r="40"
+                fill="none"
                 stroke="currentColor"
-                strokeWidth="3"
-                className="text-emerald-600"
-                markerEnd="url(#tacticalArrow)"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
+                strokeWidth="4"
+                className="text-emerald-400"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.3, 1], opacity: 1 }}
                 transition={{
-                  duration: 3,
+                  duration: 1.8,
                   repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                  delay: 1,
+                  repeatType: "loop",
+                  delay: 1.2,
+                  ease: "easeInOut",
                 }}
               />
             </svg>
           </div>
 
           <div className="relative z-10">
-            {/* Contact Hero */}
+            {/* Contact Hero - Gamified Mission Brief */}
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 80 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-16"
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="text-center mb-24"
             >
-              <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                <Target className="w-4 h-4 mr-2" />
-                Tactical Support Command
+              <Badge className="mb-6 bg-green-500/80 text-white dark:bg-green-700/80 dark:text-green-100 font-semibold py-3 px-6 rounded-full shadow-lg animate-pulse">
+                <Target className="w-6 h-6 mr-3" />
+                Mission: Contact Command
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 via-lime-600 to-emerald-600 bg-clip-text text-transparent">
-                Execute Your Contact Strategy
+              <h2 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-green-600 via-lime-400 to-emerald-500 bg-clip-text text-transparent drop-shadow-md">
+                Launch Your Game Plan
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Deploy your message with precision. Our tactical support team is
-                ready to assist you in dominating your fantasy football
-                challenges.
+              <p className="text-2xl text-gray-700 dark:text-gray-100 max-w-4xl mx-auto">
+                Lock in your strategy and connect with our elite squad to crush
+                your fantasy football challenges like a pro!
               </p>
             </motion.div>
 
-            {/* Tactical Stats */}
+            {/* Tactical Stats - Scoreboard Style */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="grid md:grid-cols-3 gap-6 mb-16"
+              transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+              className="grid md:grid-cols-3 gap-10 mb-24"
             >
-              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mx-auto mb-4"></div>
-                  <h3 className="text-2xl font-bold text-green-600 mb-2">
-                    &lt; 2 Hours
+              <Card className="border-green-300/50 dark:border-green-700/50 text-center bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-300">
+                <CardContent className="p-10">
+                  <motion.div
+                    className="w-24 h-24 bg-gradient-to-r from-green-500 to-lime-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Clock className="w-12 h-12 text-white" />
+                  </motion.div>
+                  <h3 className="text-4xl font-bold text-green-600 mb-3 animate-bounce">
+                    30 Mins
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Average Response Time
+                  <p className="text-lg text-gray-600 dark:text-gray-200">
+                    Blitz Response Time
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-lime-600 mb-2">
+              <Card className="border-green-300/50 dark:border-green-700/50 text-center bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-300">
+                <CardContent className="p-10">
+                  <motion.div
+                    className="w-24 h-24 bg-gradient-to-r from-lime-400 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Users className="w-12 h-12 text-white" />
+                  </motion.div>
+                  <h3 className="text-4xl font-bold text-lime-600 mb-3 animate-bounce">
                     24/7
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Support Coverage
+                  <p className="text-lg text-gray-600 dark:text-gray-200">
+                    All-Play Coverage
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border-green-200 dark:border-green-800 text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Trophy className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-emerald-600 mb-2">
-                    98%
+              <Card className="border-green-300/50 dark:border-green-700/50 text-center bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-300">
+                <CardContent className="p-10">
+                  <motion.div
+                    className="w-24 h-24 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Trophy className="w-12 h-12 text-white" />
+                  </motion.div>
+                  <h3 className="text-4xl font-bold text-emerald-600 mb-3 animate-bounce">
+                    100%
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Resolution Rate
+                  <p className="text-lg text-gray-600 dark:text-gray-200">
+                    Victory Rate
                   </p>
                 </CardContent>
               </Card>
             </motion.div>
 
-           
-
-            <div className=" max-w-7xl mx-auto">
-              {/* Contact Methods - Tactical Formation */}
+            <div className="max-w-7xl mx-auto">
+              {/* Contact Methods - Tactical Playbook Carousel */}
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
+                initial={{ opacity: 0, x: -80 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="space-y-6 flex flex-col justify-between items-center"
+                transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+                className="space-y-10"
               >
-                <div className="text-center mb-8">
-                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-600 to-lime-600 bg-clip-text text-transparent">
-                    Choose Your Formation
+                <div className="text-center mb-12">
+                  <h3 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 to-lime-400 bg-clip-text text-transparent drop-shadow-md">
+                    Select Your Play
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Select your preferred tactical approach to reach our team
+                  <p className="text-xl text-gray-700 dark:text-gray-100">
+                    Slide through the playbook to choose your winning contact
+                    strategy!
                   </p>
                 </div>
 
-                <div className="relative">
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className="mb-6"
-                  >
-                    <Card className="border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50 to-lime-50 dark:from-green-950 dark:to-lime-950">
-                      <CardHeader>
-                        <CardTitle className="flex items-center">
-                          <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-lime-500 rounded-full flex items-center justify-center mr-4">
-                            <Mail className="w-6 h-6 text-white" />
+                <div className="max-w-3xl mx-auto">
+                  <Card className="border-green-300/50 dark:border-green-700/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl">
+                    <CardHeader>
+                      <div className="flex justify-between mb-6">
+                        <motion.button
+                          className="px-6 py-3 text-lg font-semibold rounded-full bg-gradient-to-r from-green-500 to-lime-400 text-white shadow-lg"
+                          whileHover={{
+                            scale: 1.1,
+                            boxShadow: "0 0 15px rgba(0, 255, 0, 0.5)",
+                          }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            setActiveTab((prev) =>
+                              prev === 0 ? contactMethods.length - 1 : prev - 1
+                            )
+                          }
+                        >
+                          Previous Play
+                        </motion.button>
+                        <motion.button
+                          className="px-6 py-3 text-lg font-semibold rounded-full bg-gradient-to-r from-lime-400 to-emerald-500 text-white shadow-lg"
+                          whileHover={{
+                            scale: 1.1,
+                            boxShadow: "0 0 15px rgba(0, 255, 0, 0.5)",
+                          }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            setActiveTab((prev) =>
+                              prev === contactMethods.length - 1 ? 0 : prev + 1
+                            )
+                          }
+                        >
+                          Next Play
+                        </motion.button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="min-h-[200px] flex items-center justify-center">
+                      <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.5 }}
+                        className="w-full text-center"
+                      >
+                        <div className="flex items-center justify-center mb-4">
+                          <motion.div
+                            className={`w-16 h-16 bg-gradient-to-r ${contactMethods[activeTab].gradient} rounded-full flex items-center justify-center shadow-lg`}
+                            whileHover={{ rotate: 360 }}
+                            transition={{ duration: 0.6 }}
+                          >
+                            {contactMethods[activeTab].icon}
+                          </motion.div>
+                          <div className="ml-6">
+                            <h4
+                              className={`text-2xl font-semibold ${contactMethods[activeTab].textColor}`}
+                            >
+                              {contactMethods[activeTab].title}
+                            </h4>
+                            <p className="text-base text-gray-600 dark:text-gray-300">
+                              {contactMethods[activeTab].subtitle}
+                            </p>
                           </div>
-                          <div>
-                            <div className="text-lg">Email Command Center</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">
-                              Primary Defense
-                            </div>
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 dark:text-gray-300 mb-2">
-                          support@tacticsplc.com
+                        </div>
+                        <p className="text-xl text-gray-600 dark:text-gray-100 mb-3">
+                          {contactMethods[activeTab].contact}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          Strategic response within 24 hours
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                          {contactMethods[activeTab].details}
                         </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className="mb-6 ml-8"
-                  >
-                    <Card className="border-green-200 dark:border-green-800 bg-gradient-to-r from-lime-50 to-emerald-50 dark:from-lime-950 dark:to-emerald-950">
-                      <CardHeader>
-                        <CardTitle className="flex items-center">
-                          <div className="w-12 h-12 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-full flex items-center justify-center mr-4">
-                            <Phone className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <div className="text-lg">Direct Tactical Line</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-300">
-                              Midfield Control
-                            </div>
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 dark:text-gray-300 mb-2">
-                          +1 (555) 123-4567
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Live tactical support Mon-Fri, 9AM-6PM EST
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200"
+                          onClick={contactMethods[activeTab].buttonAction}
+                        >
+                          {contactMethods[activeTab].buttonText}
+                        </motion.button>
+                      </motion.div>
+                    </CardContent>
+                  </Card>
                 </div>
               </motion.div>
             </div>
