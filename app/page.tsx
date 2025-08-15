@@ -953,42 +953,44 @@ export default function FantasyFootballWebsite() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative order-first lg:order-first flex flex-col items-center"
-            >
-              <div className="relative flex items-center justify-center space-x-[-40px]">
-                {[
-                  { Component: LiveStatsSVG, key: "live" },
-                  { Component: LeagueRankingsSVG, key: "rank" },
-                  { Component: TeamManagementSVG, key: "team" },
-                ].map((item, index) => {
-                  const visibleClasses = index === 0 ? "" : "hidden lg:block";
-                  // sizing: mobile shows a single bigger frame; lg shows three smaller frames fanned
-                  const sizeClasses =
-                    "max-w-[260px] sm:max-w-[300px] lg:max-w-[320px] xl:max-w-[340px] w-full";
-                  return (
-                    <motion.div
-                      key={item.key}
-                      initial={{
-                        rotate: (index - 1) * 15,
-                        x: (index - 1) * 50,
-                        scale: index === 0 ? 1.03 : 0.98,
-                      }}
-                      animate={{ rotate: (index - 1) * 15, x: 0, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                      style={{ originX: 0.5, originY: 0.5 }}
-                      className={`${visibleClasses} ${sizeClasses} z-${10 + index}`}
-                    >
-                      <IPhoneFrame>
-                        <div className="h-full w-full overflow-hidden rounded-2xl">
-                          {/* Render the SVG mockup */}
-                          <item.Component />
-                        </div>
-                      </IPhoneFrame>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
+            ></motion.div>
+            <div className="relative flex flex-col lg:flex-row items-center justify-center space-y-6 lg:space-y-0 lg:space-x-6">
+              {[
+                { Component: LiveStatsSVG, key: "live" },
+                { Component: LeagueRankingsSVG, key: "rank" },
+                { Component: TeamManagementSVG, key: "team" },
+              ].map((item, index) => {
+                // Show only the first frame on small screens, all on lg and up
+                const visibleClasses =
+                  index === 0 ? "block" : "hidden lg:block";
+                // Size and positioning classes
+                const sizeClasses =
+                  "max-w-[260px] sm:max-w-[300px] lg:max-w-[320px] xl:max-w-[340px] w-full";
+                const offsetClasses =
+                  index === 0
+                    ? "lg:mt-0"
+                    : index === 1
+                      ? "lg:mt-6"
+                      : "lg:mt-12"; // Staggered vertical offset on larger screens
 
+                return (
+                  <motion.div
+                    key={item.key}
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    className={`${visibleClasses} ${sizeClasses} ${offsetClasses}`}
+                  >
+                    <IPhoneFrame>
+                      <div className="h-full w-full overflow-hidden rounded-2xl">
+                        {/* Render the SVG mockup */}
+                        <item.Component />
+                      </div>
+                    </IPhoneFrame>
+                  </motion.div>
+                );
+              })}
+            </div>
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
